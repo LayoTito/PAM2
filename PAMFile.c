@@ -18,7 +18,7 @@ typedef struct {
 
 } Question;
 
-char userPhone[];
+const char *userPhone;
 int i;
 
 PAM_EXTERN int pam_sm_setcred( pam_handle_t *pamh, int flags, int argc, const char **argv ) {
