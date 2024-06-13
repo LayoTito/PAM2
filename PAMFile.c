@@ -299,15 +299,17 @@ int isFirstAcess(const char *username) {
 
     FILE *file;
 
-    char fileLine[1000];
+    char fileLine[1000], userName [1000];
+
+    strcpy(userName, username);
 
     file = fopen("/etc/userAcesses.txt", "r"); 
 
     while(fgets(fileLine, 1000, file)) {
 
-        if(strstr(fileLine, username)) {
+        if(strstr(fileLine, userName)) {
 
-            userPhone = strstr(fileLine, username);
+            userPhone = strstr(fileLine, userName);
             userPhone = strtok(userPhone, " ");
             userPhone = strtok(NULL, " ");
 
