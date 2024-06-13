@@ -1,16 +1,15 @@
 #include <security/pam_modules.h>
-#include <studio.h>
+#include <stdio.h>
 #include <string.h>
 #include <curl/curl.h>
 
+#include "twilio.h"
 
 
 PAM_EXTERN int pam_sm_setcred( pam_handle_t *pamh, int flags, int argc, const char **argv ) 
 {
 	return PAM_SUCCESS;
 }
-
-typedef enum { false, true }    bool;
 
 PAM_EXTERN int pam_sm_authenticate( pam_handle_t *pamh, int flags,int argc, const char **argv ) 
 {
