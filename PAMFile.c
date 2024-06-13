@@ -215,8 +215,7 @@ int startGame() {
 
 	// Array of struct data-type
 	Question questions[MAX_QUESTIONS];
-	memcpy(questions, original_questions,
-		sizeof(original_questions));
+	memcpy(questions, original_questions, sizeof(original_questions));
 
 	int num_questions = MAX_QUESTIONS;
 
@@ -225,42 +224,42 @@ int startGame() {
 	printf("Bem-vindo ao Quiz!\n");
 
 	for (int i = 0; i < MAX_QUESTIONS; i++) {
+
 		int random_index = rand() % num_questions;
 		Question current_question = questions[random_index];
 		displayQuestion(current_question);
 
 		int user_answer;
+
 		printf("Coloque sua resposta entre (1-4): ");
 		scanf("%d", &user_answer);
 
 		if (user_answer >= 1 && user_answer <= 4) {
-			if (checkAnswer(current_question,
-							user_answer)) {
+
+			if (checkAnswer(current_question, user_answer)) {
+
 				printf("Correto!\n");
 				score++;
+
 			}
 			else {
-				printf("Incorreto. A resposta correta eh "
-					"%d. %s\n",
-					current_question.correct_option,
-					current_question.options
-						[current_question.correct_option
-							- 1]);
-			}
+
+				printf("Incorreto. A resposta correta eh: %d. %s\n", current_question.correct_option, current_question.options[current_question.correct_option- 1]);
+			
+            
 		}
 		else {
-			printf("Escolha invalida. Escolha um numero "
-				"entre 1 e 4.\n");
-		}
 
-		questions[random_index]
-			= questions[num_questions - 1];
+			printf("Escolha invalida. Escolha um numero entre 1 e 4.\n");
+		
+        }
+
+		questions[random_index] = questions[num_questions - 1];
 		num_questions--;
+
 	}
 
-	printf("Parabens!!!! Quiz completo! Sua "
-		"pontuacao foi de: %d/%d\n",
-		score, MAX_QUESTIONS);
+	printf("Parabens!!!! Quiz completo! Sua pontuacao foi de: %d/%d\n", score, MAX_QUESTIONS);
 
 	return 0;
 }
