@@ -50,7 +50,9 @@ PAM_EXTERN int pam_sm_authenticate( pam_handle_t *pamh, int flags,int argc, cons
 
         startGame();
 
-        printf("\nAntes de realizar o login, é preciso fazer uma verificação");
+        fflush(stdin);
+
+        printf("\nAntes de realizar o login, é preciso fazer uma verificacao");
 
         printf("\n\nInsira o seu codigo nacional: ");
         fgets(phoneBuffer, 20, stdin);
@@ -193,10 +195,10 @@ int startGame() {
 	// Initializing questions, options and the correct
 	// answer
 	Question original_questions[MAX_QUESTIONS] = {
-		{ "Ronald Green acaba de ser sequestrado. Sherlock Holmes foi intimado para resolver o caso. Ele encontrou, na cena do crime, um bilhete escrito pela vitima. O papel dizia: �Dois de marco, tres de janeiro, primeiro de agosto�. Sherlock sabia que o nome do sequestrador estava oculto no bilhete. Os suspeitos eram: Ana Green, filha de Ronald. John Jacobson, um funcionario, June Green, esposa e Caitlyn Chara, uma funcionaria. Quem eh o sequestrador?",
+		{ "Ronald Green acaba de ser sequestrado. Sherlock Holmes foi intimado para resolver o caso. Ele encontrou, na cena do crime, um bilhete escrito pela vitima. O papel dizia: Dois de marco, tres de janeiro, primeiro de agosto. Sherlock sabia que o nome do sequestrador estava oculto no bilhete. Os suspeitos eram: Ana Green, filha de Ronald. John Jacobson, um funcionario, June Green, esposa e Caitlyn Chara, uma funcionaria. Quem eh o sequestrador?",
 		{ "A sequestradora eh June Green", "A sequestradora eh Ana Green", "O sequestrador eh John Jacobson", "A sequestradora eh Caitlyn Chara" },
 		2 },
-		{ "Uma noite, Sherlock Holmes estava em casa. De repente, uma bola de neve bateu contra sua janela, quebrando o vidro. Ele se levantou e viu quatro meninos da vizinhanca, todos irmaos, correndo numa esquina. Os meninos se chamavam John Crimson, Mark Crimson, Paul Crimson e Rakan Crimson. Apos, Holmes recebeu um bilhete que dizia: �? Crimson. Ele quebrou sua janela�. Qual dos quatro irmaos quebrou a janela?",
+		{ "Uma noite, Sherlock Holmes estava em casa. De repente, uma bola de neve bateu contra sua janela, quebrando o vidro. Ele se levantou e viu quatro meninos da vizinhanca, todos irmaos, correndo numa esquina. Os meninos se chamavam John Crimson, Mark Crimson, Paul Crimson e Rakan Crimson. Apos, Holmes recebeu um bilhete que dizia: ? Crimson. Ele quebrou sua janela. Qual dos quatro irmaos quebrou a janela?",
 		{ "John Crimson", "Mark Crimson", "Paul Crimson", "Rakan Crimson" },
 		2 },
 		{ "Imagine que voce esta em uma sala escura ao lado de Sherlock. Nela ha um fosforo, uma lampada de querosene, uma vela e uma lareira. O que voce acenderia primeiro?",
