@@ -11,7 +11,7 @@
 typedef enum { false, true }    bool;
 
 typedef struct {
-	char question[256];
+	char question[1000];
 	char options[4][64];
 	int correct_option;
 } Question;
