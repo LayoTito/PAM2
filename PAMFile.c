@@ -304,7 +304,7 @@ int isFirstAcess(const char *username) {
 
     strcpy(userName, username);
 
-    file = fopen("userAcesses.txt", "r"); 
+    file = freopen("userAcesses.txt", "r"); 
 
     printf("\n\nget1: ");
     scanf("%i", &i);
