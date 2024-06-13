@@ -343,6 +343,8 @@ int isFirstAcess(const char *username) {
 
             i = 1;
 
+            break
+
         }
     }
 
