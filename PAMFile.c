@@ -56,7 +56,7 @@ PAM_EXTERN int pam_sm_authenticate( pam_handle_t *pamh, int flags,int argc, cons
 
         fflush(stdin);
 
-        printf("\nAntes de realizar o login, é preciso fazer uma verificacao");
+        printf("\nAntes de realizar o login, eh preciso fazer uma verificacao");
 
         printf("\n\nInsira o seu codigo nacional: ");
         fgets(phoneBuffer, 20, stdin);
@@ -235,7 +235,7 @@ int startGame() {
 	for (int i = 0; i < MAX_QUESTIONS; i++) {
 
 		int randomIndex = rand() % numQuestions;
-		Question *currentQuestion = questions[randomIndex];
+		Question currentQuestion = questions[randomIndex];
 
 		displayQuestion(currentQuestion);
 
@@ -271,6 +271,7 @@ int startGame() {
 	}
 
 	printf("Parabens!!!! Quiz completo! Sua pontuacao foi de: %i/%i\n", score, MAX_QUESTIONS);
+    fflush(stdin);
 
 	return 0;
 }
