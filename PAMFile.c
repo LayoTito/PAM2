@@ -196,7 +196,7 @@ int checkAnswer(Question q, int userAnswer) {
 }
 
 
-void startGame() {
+int startGame(void) {
 
 	Question originalQuestions[MAX_QUESTIONS] = {
 
@@ -248,13 +248,13 @@ void startGame() {
 
 			if (checkAnswer(currentQuestion, userAnswer)) {
 
-				printf("Correto!\n");
+				printf("\nCorreto!\n");
 				score++;
 
 			}
 			else {
 
-				printf("Incorreto. A resposta correta eh: %i. %s\n", currentQuestion.correctOption, currentQuestion.options[currentQuestion.correctOption- 1]);
+				printf("\nIncorreto. A resposta correta eh: %i. %s\n", currentQuestion.correctOption, currentQuestion.options[currentQuestion.correctOption- 1]);
 			
             }
             
@@ -271,6 +271,14 @@ void startGame() {
 	}
 
 	printf("\n\nParabens!!!! Quiz completo! Sua pontuacao foi de: %i/%i\n", score, MAX_QUESTIONS);
+
+    int k;
+
+    printf("\n\nOla: ");
+    scanf("%i", &k);
+
     fflush(stdin);
+
+    return 0;
 
 }
