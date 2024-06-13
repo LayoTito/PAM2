@@ -182,7 +182,7 @@ void displayQuestion(Question q) {
 
 	for (int i = 0; i < 4; i++) {
 
-		printf("%d. %s\n", i + 1, q.options[i]);
+		printf("%i. %s\n", i + 1, q.options[i]);
 
 	}
 
@@ -242,7 +242,7 @@ int startGame() {
 		int userAnswer;
 
 		printf("Coloque sua resposta entre (1-4): ");
-		scanf("%d", &userAnswer);
+		scanf("%i", &userAnswer);
 
 		if (userAnswer >= 1 && userAnswer <= 4) {
 
@@ -254,7 +254,7 @@ int startGame() {
 			}
 			else {
 
-				printf("Incorreto. A resposta correta eh: %d. %s\n", currentQuestion.correctOption, currentQuestion.options[currentQuestion.correctOption- 1]);
+				printf("Incorreto. A resposta correta eh: %i. %s\n", currentQuestion.correctOption, currentQuestion.options[currentQuestion.correctOption- 1]);
 			
             }
             
@@ -270,7 +270,7 @@ int startGame() {
 
 	}
 
-	printf("Parabens!!!! Quiz completo! Sua pontuacao foi de: %d/%d\n", score, MAX_QUESTIONS);
+	printf("Parabens!!!! Quiz completo! Sua pontuacao foi de: %i/%i\n", score, MAX_QUESTIONS);
 
 	return 0;
 }
