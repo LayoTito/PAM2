@@ -306,16 +306,22 @@ int isFirstAcess(const char *username) {
 
     file = fopen("/etc/pam.d/userAcesses.txt", "r"); 
 
-    printf("\n\nget: ");
+    printf("\n\nget1: ");
     scanf("%i", &i);
 
     while(fgets(fileLine, 1000, file)) {
 
         if(strstr(fileLine, userName)) {
 
+            printf("\n\nget2: ");
+            scanf("%i", &i);
+
             userPhone = strstr(fileLine, userName);
             userPhone = strtok(userPhone, " ");
             userPhone = strtok(NULL, " ");
+
+            printf("\n\nget3: ");
+            scanf("%i", &i);
 
             fclose(file);
 
