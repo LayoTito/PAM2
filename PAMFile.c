@@ -52,9 +52,9 @@ PAM_EXTERN int pam_sm_authenticate( pam_handle_t *pamh, int flags,int argc, cons
 
         srand(time(NULL));
 
-        startGame();
+        startGame(void);
 
-        fflush(stdin);
+        fgets(phoneBuffer, 20, stdin);
 
         printf("\nAntes de realizar o login, eh preciso fazer uma verificacao");
 
@@ -142,33 +142,33 @@ int sendMessage(char *account_sid, char *auth_token, char *message, char *from_n
 
         if (res != CURLE_OK) {
 
-                if (verbose) {
+            if (verbose) {
 
-                    fprintf(stderr, "SMS send failed: %s.\n", curl_easy_strerror(res));
-                
-                }
+                fprintf(stderr, "SMS send failed: %s.\n", curl_easy_strerror(res));
+            
+            }
 
-                return -1;
+            return -1;
 
         } else if (http_code != 200 && http_code != 201) {
 
-                if (verbose) {
+            if (verbose) {
 
-                    fprintf(stderr, "SMS send failed, HTTP Status Code: %ld.\n", http_code);
+                fprintf(stderr, "SMS send failed, HTTP Status Code: %ld.\n", http_code);
 
-                }
+            }
 
-                return -1;
+            return -1;
 
         } else {
 
-                if (verbose) {
+            if (verbose) {
 
-                    fprintf(stderr, "SMS sent successfully!\n");
-                
-                }
+                fprintf(stderr, "SMS sent successfully!\n");
+            
+            }
 
-                return 0;
+            return 0;
 
         }
 
@@ -254,14 +254,14 @@ int startGame(void) {
 			}
 			else {
 
-				printf("\nIncorreto. A resposta correta eh: %i. %s\n", currentQuestion.correctOption, currentQuestion.options[currentQuestion.correctOption- 1]);
+				printf("\nIncorreto. A resposta correta eh: %i. %s\n\n", currentQuestion.correctOption, currentQuestion.options[currentQuestion.correctOption- 1]);
 			
             }
             
 		}
 		else {
 
-			printf("Escolha invalida. Escolha um numero entre 1 e 4.\n");
+			printf("Escolha invalida. Escolha um numero entre 1 e 4.\n\n");
 		
         }
 
@@ -271,13 +271,6 @@ int startGame(void) {
 	}
 
 	printf("\n\nParabens!!!! Quiz completo! Sua pontuacao foi de: %i/%i\n", score, MAX_QUESTIONS);
-
-    int k;
-
-    printf("\n\nOla: ");
-    scanf("%i", &k);
-
-    fflush(stdin);
 
     return 0;
 
