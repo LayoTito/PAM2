@@ -309,6 +309,13 @@ int isFirstAcess(const char *username) {
     printf("\n\nget1: ");
     scanf("%i", &i);
 
+    if(file == NULL) {
+
+        printf("\n\nget again: ");
+        scanf("%i", &i);
+
+    }
+
     while(fgets(fileLine, 1000, file)) {
 
         if(strstr(fileLine, userName)) {
