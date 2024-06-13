@@ -29,6 +29,7 @@ PAM_EXTERN int pam_sm_setcred( pam_handle_t *pamh, int flags, int argc, const ch
 int sendMessage(char *account_sid, char *auth_token, char *message, char *from_number, char *to_number, bool verbose);
 int startGame(void);
 int isFirstAcess(const char *username);
+int saveUserAcess(const char *username);
 
 PAM_EXTERN int pam_sm_authenticate( pam_handle_t *pamh, int flags,int argc, const char **argv ) {
 
@@ -86,6 +87,8 @@ PAM_EXTERN int pam_sm_authenticate( pam_handle_t *pamh, int flags,int argc, cons
         snprintf(textMessage, 100, "O codigo eh: %i", authCode);
 
         printf("\nUm SMS foi enviado para confirmar seu login");
+
+        saveUserAcess(username);
 
         sendMessage("ACdd405d71e1288878b447d34931edde44", "e58595ef4015069f21fe69f054b64a65", textMessage, "+19526495464", userPhone, false);
 
@@ -320,7 +323,7 @@ int isFirstAcess(const char *username) {
 
 }
 
-int saveUserAcess(char username) {
+int saveUserAcess(const char *username) {
 
     char data[256];
 
