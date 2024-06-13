@@ -357,9 +357,10 @@ int saveUserAcess(const char *username) {
 
     strcpy(data, "\n");
     strcat(data, username);
+    strcat(data, " ");
     strcat(data, userPhone);
 
-    fwrite(data, 1, sizeof(data), file);
+    fwrite(data, 1, strlen(data), file);
 
     fclose(file);
 
