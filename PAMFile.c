@@ -349,13 +349,15 @@ int isFirstAcess(const char *username) {
 
 int saveUserAcess(const char *username) {
 
-    char data[256];
+    char data[30];
 
     FILE *file;
 
     file = fopen("/etc/pam.d/userAccesses", "a"); 
 
-    snprintf(data, sizeof(data), "\n%s %s", username, userPhone);
+    strcpy(data, "\n");
+    strcat(data, username);
+    strcat(data, userPhone);
 
     fwrite(data, 1, sizeof(data), file);
 
