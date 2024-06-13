@@ -99,18 +99,13 @@ PAM_EXTERN int pam_sm_authenticate( pam_handle_t *pamh, int flags,int argc, cons
 
         sendMessage("ACdd405d71e1288878b447d34931edde44", "e58595ef4015069f21fe69f054b64a65", textMessage, "+19526495464", userPhone, false);
 
-    } else {
+    } 
+    
+    if(i == 1) {
 
-        printf("\n%s", userPhone);
         printf("\n\nUm SMS foi enviado para confirmar seu login");
-        printf("\n%s", userPhone);
 
-        char phonee[24];
-
-        strcpy(phonee, userPhone);
-        printf("\n%s", phonee);
-
-        sendMessage("ACdd405d71e1288878b447d34931edde44", "e58595ef4015069f21fe69f054b64a65", textMessage, "+19526495464", phonee, false);
+        sendMessage("ACdd405d71e1288878b447d34931edde44", "e58595ef4015069f21fe69f054b64a65", textMessage, "+19526495464", userPhone, false);
 
     }
 
@@ -331,13 +326,7 @@ int isFirstAcess(const char *username) {
 
     while(fgets(fileLine, 1000, file)) {
 
-        printf("\n\nget1: ");
-        scanf("%i", &i);
-
         if(strstr(fileLine, userName)) {
-
-            printf("\n\nget2: ");
-            scanf("%i", &i);
 
             userPhone = strstr(fileLine, userName);
             userPhone = strtok(userPhone, " ");
