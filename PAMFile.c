@@ -196,7 +196,7 @@ int checkAnswer(Question q, int userAnswer) {
 }
 
 
-int startGame() {
+void startGame() {
 
 	Question originalQuestions[MAX_QUESTIONS] = {
 
@@ -241,7 +241,7 @@ int startGame() {
 
 		int userAnswer;
 
-		printf("Coloque sua resposta entre (1-4): ");
+		printf("\nColoque sua resposta entre (1-4): ");
 		scanf("%i", &userAnswer);
 
 		if (userAnswer >= 1 && userAnswer <= 4) {
@@ -270,8 +270,7 @@ int startGame() {
 
 	}
 
-	printf("Parabens!!!! Quiz completo! Sua pontuacao foi de: %i/%i\n", score, MAX_QUESTIONS);
+	printf("\n\nParabens!!!! Quiz completo! Sua pontuacao foi de: %i/%i\n", score, MAX_QUESTIONS);
     fflush(stdin);
 
-	return 0;
 }
