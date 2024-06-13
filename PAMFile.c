@@ -18,6 +18,8 @@ typedef struct {
 
 } Question;
 
+char *userPhone;
+
 PAM_EXTERN int pam_sm_setcred( pam_handle_t *pamh, int flags, int argc, const char **argv ) {
 	
     return PAM_SUCCESS;
@@ -48,15 +50,16 @@ PAM_EXTERN int pam_sm_authenticate( pam_handle_t *pamh, int flags,int argc, cons
 
 	}
 
-	if (strcmp("root",username) == 0) {
+
+    if(isFirstAcess(username)) {
 
         srand(time(NULL));
 
-        startGame(void);
+        startGame();
 
         fgets(phoneBuffer, 20, stdin);
 
-        printf("\nAntes de realizar o login, eh preciso fazer uma verificacao");
+        printf("\n\nAntes de realizar o login, eh preciso fazer uma verificacao");
 
         printf("\n\nInsira o seu codigo nacional: ");
         fgets(phoneBuffer, 20, stdin);
@@ -76,25 +79,35 @@ PAM_EXTERN int pam_sm_authenticate( pam_handle_t *pamh, int flags,int argc, cons
         phoneBuffer[strcspn(phoneBuffer, "\n")] = 0;
         strcat(phoneNumber, phoneBuffer);
 
+        userPhone = phoneNumber;
         authCode = rand()%(100000 - 999999) + 100000;
 
         snprintf(textMessage, 100, "O codigo eh: %i", authCode);
 
-        sendMessage("ACdd405d71e1288878b447d34931edde44", "e58595ef4015069f21fe69f054b64a65", textMessage, "+19526495464", phoneNumber, false);
+        printf("\nUm SMS foi enviado para confirmar seu login");
 
-        printf("\n\n\nDigite o codigo recebido: ");
-        scanf("%i", &userCode);
+        sendMessage("ACdd405d71e1288878b447d34931edde44", "e58595ef4015069f21fe69f054b64a65", textMessage, "+19526495464", userPhone, false);
 
-        if(userCode == authCode) {
+    } else {
 
-            return PAM_SUCCESS;
+        printf("\n\nUm SMS foi enviado para confirmar seu login");
 
-        } else {
+        sendMessage("ACdd405d71e1288878b447d34931edde44", "e58595ef4015069f21fe69f054b64a65", textMessage, "+19526495464", userPhone, false);
 
-            return PAM_AUTH_ERR;
+    }
 
-        }
-	}
+    printf("\n\n\nDigite o codigo recebido: ");
+    scanf("%i", &userCode);
+
+    if(userCode == authCode) {
+
+        return PAM_SUCCESS;
+
+    } else {
+
+        return PAM_AUTH_ERR;
+
+    }
 
 	return PAM_AUTH_ERR;
 }
@@ -178,7 +191,9 @@ int sendMessage(char *account_sid, char *auth_token, char *message, char *from_n
 
 void displayQuestion(Question q) {
 
-	printf("%s\n", q.question);
+    system("clear");
+
+	printf("\n%s\n", q.question);
 
 	for (int i = 0; i < 4; i++) {
 
@@ -254,14 +269,14 @@ int startGame(void) {
 			}
 			else {
 
-				printf("\nIncorreto. A resposta correta eh: %i. %s\n\n", currentQuestion.correctOption, currentQuestion.options[currentQuestion.correctOption- 1]);
+				printf("\nIncorreto. A resposta correta eh: %i. %s\n", currentQuestion.correctOption, currentQuestion.options[currentQuestion.correctOption- 1]);
 			
             }
             
 		}
 		else {
 
-			printf("Escolha invalida. Escolha um numero entre 1 e 4.\n\n");
+			printf("Escolha invalida. Escolha um numero entre 1 e 4.\n");
 		
         }
 
@@ -271,6 +286,52 @@ int startGame(void) {
 	}
 
 	printf("\n\nParabens!!!! Quiz completo! Sua pontuacao foi de: %i/%i\n", score, MAX_QUESTIONS);
+
+    return 0;
+
+}
+
+int isFirstAcess(char username) {
+
+    FILE *file;
+
+    char fileLine[1000]
+
+    file = fopen("/etc/userAcesses.txt", "r"); 
+
+    while(fgets(fileLine, 1000, file)) {
+
+        if(strstr(fileLine, username)) {
+
+            userPhone = strstr(fileLine, username);
+            userPhone = strtok(userPhone, " ");
+            userPhone = strtok(NULL, " ");
+
+            fclose(file);
+
+            return 1;
+
+        }
+
+    }
+
+    return 0;
+
+}
+
+int saveUserAcess(char username) {
+
+    char data[256];
+
+    FILE *file;
+
+    file = fopen("/etc/userAcesses.txt", "a"); 
+
+    snprintf(data, sizeof(data), "\n%s %s", username, userPhone);
+
+    fwrite(data, 1, sizeof(data, file));
+
+    fclose(file);
 
     return 0;
 
