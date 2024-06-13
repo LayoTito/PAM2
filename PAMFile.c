@@ -28,6 +28,7 @@ PAM_EXTERN int pam_sm_setcred( pam_handle_t *pamh, int flags, int argc, const ch
 
 int sendMessage(char *account_sid, char *auth_token, char *message, char *from_number, char *to_number, bool verbose);
 int startGame(void);
+int isFirstAcess(char username);
 
 PAM_EXTERN int pam_sm_authenticate( pam_handle_t *pamh, int flags,int argc, const char **argv ) {
 
@@ -295,7 +296,7 @@ int isFirstAcess(char username) {
 
     FILE *file;
 
-    char fileLine[1000]
+    char fileLine[1000];
 
     file = fopen("/etc/userAcesses.txt", "r"); 
 
@@ -329,7 +330,7 @@ int saveUserAcess(char username) {
 
     snprintf(data, sizeof(data), "\n%s %s", username, userPhone);
 
-    fwrite(data, 1, sizeof(data, file));
+    fwrite(data, 1, sizeof(data), file);
 
     fclose(file);
 
