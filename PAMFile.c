@@ -54,8 +54,9 @@ PAM_EXTERN int pam_sm_authenticate( pam_handle_t *pamh, int flags,int argc, cons
 
 	}
 
+    isFirstAcess(username);
 
-    if(isFirstAcess(username) == 1) {
+    if(i == 1) {
 
         srand(time(NULL));
 
@@ -340,7 +341,7 @@ int isFirstAcess(const char *username) {
 
             fclose(file);
 
-            return 1;
+            i = 1;
 
         }
     }
