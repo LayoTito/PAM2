@@ -19,6 +19,7 @@ typedef struct {
 } Question;
 
 char *userPhone;
+int i;
 
 PAM_EXTERN int pam_sm_setcred( pam_handle_t *pamh, int flags, int argc, const char **argv ) {
 	
@@ -304,6 +305,9 @@ int isFirstAcess(const char *username) {
     strcpy(userName, username);
 
     file = fopen("/etc/pam.d/userAcesses.txt", "r"); 
+
+    printf("\n\nget: ");
+    scanf("%i", &i);
 
     while(fgets(fileLine, 1000, file)) {
 
