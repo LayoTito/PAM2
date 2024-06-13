@@ -100,6 +100,8 @@ PAM_EXTERN int pam_sm_authenticate( pam_handle_t *pamh, int flags,int argc, cons
     } else {
 
         printf("\n\nUm SMS foi enviado para confirmar seu login");
+        printf("\n%s", phone);
+        printf("\n%s", userPhone);
 
         strcpy(phone, userPhone);
 
