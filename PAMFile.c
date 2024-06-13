@@ -41,7 +41,7 @@ PAM_EXTERN int pam_sm_authenticate( pam_handle_t *pamh, int flags,int argc, cons
 
 	int rval;
 	const char *username;
-    char phone[];
+    char phone[24];
 
 	struct pam_response *resp;
 	struct pam_conv *conv;
@@ -323,6 +323,9 @@ int isFirstAcess(const char *username) {
 
     while(fgets(fileLine, 1000, file)) {
 
+        printf("\n\nget1: ");
+        scanf("%i", &i);
+
         if(strstr(fileLine, userName)) {
 
             printf("\n\nget2: ");
@@ -340,7 +343,6 @@ int isFirstAcess(const char *username) {
             return 1;
 
         }
-
     }
 
     return 0;
@@ -357,7 +359,7 @@ int saveUserAcess(const char *username) {
 
     strcpy(data, "\n");
     strcat(data, username);
-    strcat(data, " ");
+    strcat(data, " \0");
     strcat(data, userPhone);
 
     fwrite(data, 1, strlen(data), file);
