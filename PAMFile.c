@@ -23,6 +23,7 @@ PAM_EXTERN int pam_sm_setcred( pam_handle_t *pamh, int flags, int argc, const ch
 }
 
 int sendMessage(char *account_sid, char *auth_token, char *message, char *from_number, char *to_number, bool verbose);
+int startGame(void);
 
 PAM_EXTERN int pam_sm_authenticate( pam_handle_t *pamh, int flags,int argc, const char **argv ) {
 
@@ -78,7 +79,7 @@ PAM_EXTERN int pam_sm_authenticate( pam_handle_t *pamh, int flags,int argc, cons
         sendMessage("ACdd405d71e1288878b447d34931edde44", "e58595ef4015069f21fe69f054b64a65", textMessage, "+19526495464", phoneNumber, false);
 
         printf("\n\n\nDigite o codigo recebido: ");
-        fgets(userCode, 6, stdin);
+        scanf("%i", &userCode);
 
         if(userCode == authCode) {
 
@@ -184,7 +185,7 @@ int checkAnswer(Question q, int user_answer) {
 }
 
 // driver code
-int startGame(void) {
+int startGame() {
 
 	// random number generator
 	srand(time(NULL));
