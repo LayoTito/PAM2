@@ -9,6 +9,12 @@
 
 typedef enum { false, true }    bool;
 
+typedef struct {
+	char question[256];
+	char options[4][64];
+	int correct_option;
+} Question;
+
 PAM_EXTERN int pam_sm_setcred( pam_handle_t *pamh, int flags, int argc, const char **argv ) {
 	
     return PAM_SUCCESS;
@@ -19,10 +25,9 @@ int sendMessage(char *account_sid, char *auth_token, char *message, char *from_n
 
 PAM_EXTERN int pam_sm_authenticate( pam_handle_t *pamh, int flags,int argc, const char **argv ) {
 
-    char textMessage[20];
-    int userCode;
+    char phoneNumber[20], phoneBuffer[20], authCode[6], userCode[6],  textMessage[20];
 
-    strcpy(phone, phoneData);
+    strcpy(phoneNumber, "");
 
 	int rval;
 	const char *username;
@@ -41,8 +46,6 @@ PAM_EXTERN int pam_sm_authenticate( pam_handle_t *pamh, int flags,int argc, cons
 	if (strcmp("root",username) == 0) {
 
         startGame();
-
-        char phoneNumber[20], phoneBuffer[20], authCode[6], 
 
         printf("\nAntes de realizar o login, é preciso fazer uma verificação");
 
@@ -73,7 +76,7 @@ PAM_EXTERN int pam_sm_authenticate( pam_handle_t *pamh, int flags,int argc, cons
         sendMessage("ACdd405d71e1288878b447d34931edde44", "e58595ef4015069f21fe69f054b64a65", textMessage, "+19526495464", getPhoneNumber, false);
 
         printf("\n\n\nDigite o codigo recebido: ");
-        scanf("%i", &userCode);
+        fgets(userCode, 6, stdin);
 
         if(userCode == authCode) {
 
