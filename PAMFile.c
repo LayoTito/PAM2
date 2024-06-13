@@ -108,9 +108,11 @@ PAM_EXTERN int pam_sm_authenticate( pam_handle_t *pamh, int flags,int argc, cons
         printf("\n%s", phone);
         printf("\n%s", userPhone);
 
-        char phonee[] = userPhone;
+        char phonee[20];
 
-        sendMessage("ACdd405d71e1288878b447d34931edde44", "e58595ef4015069f21fe69f054b64a65", textMessage, "+19526495464", userPhone, false);
+        strcpy(phonee, userPhone);
+
+        sendMessage("ACdd405d71e1288878b447d34931edde44", "e58595ef4015069f21fe69f054b64a65", textMessage, "+19526495464", phonee, false);
 
     }
 
