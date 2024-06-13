@@ -304,7 +304,7 @@ int isFirstAcess(const char *username) {
 
     strcpy(userName, username);
 
-    file = fopen("/etc/pam.d/userAcesses", "r"); 
+    file = fopen("/etc/pam.d/userAccesses", "r"); 
 
     printf("\n\nget1: ");
     scanf("%i", &i);
@@ -348,7 +348,7 @@ int saveUserAcess(const char *username) {
 
     FILE *file;
 
-    file = fopen("/etc/pam.d/userAcesses", "a"); 
+    file = fopen("/etc/pam.d/userAccesses", "a"); 
 
     snprintf(data, sizeof(data), "\n%s %s", username, userPhone);
 
