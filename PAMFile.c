@@ -332,6 +332,11 @@ int isFirstAcess(const char *username) {
             userPhone = strtok(userPhone, " ");
             userPhone = strtok(NULL, " ");
 
+            char phonee[24];
+
+            strcpy(phonee, userPhone);
+            userPhone = phonee;
+
             printf("\n\nget3: %s", userPhone);
 
             fclose(file);
