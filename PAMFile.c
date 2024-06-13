@@ -1,5 +1,7 @@
 #include <security/pam_modules.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 #include <string.h>
 #include <curl/curl.h>
 
@@ -13,9 +15,12 @@ PAM_EXTERN int pam_sm_setcred( pam_handle_t *pamh, int flags, int argc, const ch
 
 }
 
+int sendMessage(char *account_sid, char *auth_token, char *message, char *from_number, char *to_number, bool verbose);
+
 PAM_EXTERN int pam_sm_authenticate( pam_handle_t *pamh, int flags,int argc, const char **argv ) {
 
-    char phone[20], phoneData[20];
+    char textMessage[20];
+    int userCode;
 
     strcpy(phone, phoneData);
 
@@ -35,27 +40,50 @@ PAM_EXTERN int pam_sm_authenticate( pam_handle_t *pamh, int flags,int argc, cons
 
 	if (strcmp("root",username) == 0) {
 
+        startGame();
+
+        char phoneNumber[20], phoneBuffer[20], authCode[6], 
+
         printf("\nAntes de realizar o login, é preciso fazer uma verificação");
 
         printf("\n\nInsira o seu codigo nacional: ");
-        gets(phoneData);
+        fgets(phoneBuffer, 20, stdin);
 
-        strcat(phone, phoneData);
+        phoneBuffer[strcspn(phoneBuffer, "\n")] = 0;
+        strcat(phoneNumber, phoneBuffer);
 
         printf("\nInsira o seu DDD: ");
-        gets(phoneData);
+        fgets(phoneBuffer, 20, stdin);
 
-        strcat(phone, phoneData);
+        phoneBuffer[strcspn(phoneBuffer, "\n")] = 0;
+        strcat(phoneNumber, phoneBuffer);
 
         printf("\nInsira o seu numero de telefone: ");
-        gets(phoneData);
+        fgets(phoneBuffer, 20, stdin);
 
-        strcat(phone, phoneData);
+        phoneBuffer[strcspn(phoneBuffer, "\n")] = 0;
+        strcat(phoneNumber, phoneBuffer);
 
-        sendMessage("ACdd405d71e1288878b447d34931edde44", "e58595ef4015069f21fe69f054b64a65", "Heelou mi freind", "+19526495464", phone, NULL, false);
 
-		return PAM_SUCCESS;
+        srand(time(NULL));
+        authCode = rand()%(100000 - 999999) + 100000;
 
+        snprintf(textMessage, 100, "O codigo eh: %i", authCode);
+
+        sendMessage("ACdd405d71e1288878b447d34931edde44", "e58595ef4015069f21fe69f054b64a65", textMessage, "+19526495464", getPhoneNumber, false);
+
+        printf("\n\n\nDigite o codigo recebido: ");
+        scanf("%i", &userCode);
+
+        if(userCode == authCode) {
+
+            return PAM_SUCCESS;
+
+        } else {
+
+            return PAM_AUTH_ERR;
+
+        }
 	}
 
 	return PAM_AUTH_ERR;
@@ -76,20 +104,11 @@ int sendMessage(char *account_sid, char *auth_token, char *message, char *from_n
 
         char url[maxMessageSize];
 
-        snprintf(url, sizeof(url), "%s%s%s",
-                 "https://api.twilio.com/2010-04-01/Accounts/",
-                 account_sid,
-                 "/Messages");
+        snprintf(url, sizeof(url), "%s%s%s", "https://api.twilio.com/2010-04-01/Accounts/", account_sid, "/Messages");
 
         char parameters[maxMessageSize];
 
-        snprintf(parameters, sizeof(parameters), "%s%s%s%s%s%s",
-                    "To=",
-                    to_number,
-                    "&From=",
-                    from_number,
-                    "&Body=",
-                    message);
+        snprintf(parameters, sizeof(parameters), "%s%s%s%s%s%s", "To=", to_number, "&From=", from_number, "&Body=", message);
 
 
 
@@ -145,4 +164,95 @@ int sendMessage(char *account_sid, char *auth_token, char *message, char *from_n
 
     return -1;
 
+}
+
+void displayQuestion(Question q) {
+	printf("%s\n", q.question);
+	for (int i = 0; i < 4; i++) {
+		printf("%d. %s\n", i + 1, q.options[i]);
+	}
+}
+
+// function to check the answer
+int checkAnswer(Question q, int user_answer) {
+	return (user_answer == q.correct_option);
+}
+
+// driver code
+int startGame() {
+
+	// random number generator
+	srand(time(NULL));
+
+	// Initializing questions, options and the correct
+	// answer
+	Question original_questions[MAX_QUESTIONS] = {
+		{ "Ronald Green acaba de ser sequestrado. Sherlock Holmes foi intimado para resolver o caso. Ele encontrou, na cena do crime, um bilhete escrito pela vitima. O papel dizia: �Dois de marco, tres de janeiro, primeiro de agosto�. Sherlock sabia que o nome do sequestrador estava oculto no bilhete. Os suspeitos eram: Ana Green, filha de Ronald. John Jacobson, um funcionario, June Green, esposa e Caitlyn Chara, uma funcionaria. Quem eh o sequestrador?",
+		{ "A sequestradora eh June Green", "A sequestradora eh Ana Green", "O sequestrador eh John Jacobson", "A sequestradora eh Caitlyn Chara" },
+		2 },
+		{ "Uma noite, Sherlock Holmes estava em casa. De repente, uma bola de neve bateu contra sua janela, quebrando o vidro. Ele se levantou e viu quatro meninos da vizinhanca, todos irmaos, correndo numa esquina. Os meninos se chamavam John Crimson, Mark Crimson, Paul Crimson e Rakan Crimson. Apos, Holmes recebeu um bilhete que dizia: �? Crimson. Ele quebrou sua janela�. Qual dos quatro irmaos quebrou a janela?",
+		{ "John Crimson", "Mark Crimson", "Paul Crimson", "Rakan Crimson" },
+		2 },
+		{ "Imagine que voce esta em uma sala escura ao lado de Sherlock. Nela ha um fosforo, uma lampada de querosene, uma vela e uma lareira. O que voce acenderia primeiro?",
+		{ "O fosforo", "A lampada de querosene",
+			"A vela", "A lareira" },
+		1 },
+		{ "Alguns meses tem 31 dias, outros tem 30 dias. Quantos meses tem 28 dias?",
+		{ "1 mes", "12 meses", "6 meses", "3 meses" },
+		2 },
+		{ "Cinco irmas estao reunidas em um quarto. Maria esta fazendo trico, Fernanda esta desenhando, Luiza esta jogando xadrez e Lucia esta dormindo. Com quem a quinta irma esta?",
+		{ "Maria", "Luiza", "Fernanda", "Lucia" },
+		2 }
+	};
+
+	// Array of struct data-type
+	Question questions[MAX_QUESTIONS];
+	memcpy(questions, original_questions,
+		sizeof(original_questions));
+
+	int num_questions = MAX_QUESTIONS;
+
+	int score = 0;
+
+	printf("Bem-vindo ao Quiz!\n");
+
+	for (int i = 0; i < MAX_QUESTIONS; i++) {
+		int random_index = rand() % num_questions;
+		Question current_question = questions[random_index];
+		displayQuestion(current_question);
+
+		int user_answer;
+		printf("Coloque sua resposta entre (1-4): ");
+		scanf("%d", &user_answer);
+
+		if (user_answer >= 1 && user_answer <= 4) {
+			if (checkAnswer(current_question,
+							user_answer)) {
+				printf("Correto!\n");
+				score++;
+			}
+			else {
+				printf("Incorreto. A resposta correta eh "
+					"%d. %s\n",
+					current_question.correct_option,
+					current_question.options
+						[current_question.correct_option
+							- 1]);
+			}
+		}
+		else {
+			printf("Escolha invalida. Escolha um numero "
+				"entre 1 e 4.\n");
+		}
+
+		questions[random_index]
+			= questions[num_questions - 1];
+		num_questions--;
+	}
+
+	printf("Parabens!!!! Quiz completo! Sua "
+		"pontuacao foi de: %d/%d\n",
+		score, MAX_QUESTIONS);
+
+	return 0;
 }
