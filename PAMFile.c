@@ -53,7 +53,7 @@ PAM_EXTERN int pam_sm_authenticate( pam_handle_t *pamh, int flags,int argc, cons
 	}
 
 
-    if(isFirstAcess(username)) {
+    if(isFirstAcess(username) == 1) {
 
         srand(time(NULL));
 
@@ -303,7 +303,7 @@ int isFirstAcess(const char *username) {
 
     strcpy(userName, username);
 
-    file = fopen("/etc/userAcesses.txt", "r"); 
+    file = fopen("userAcesses.txt", "r"); 
 
     while(fgets(fileLine, 1000, file)) {
 
@@ -331,7 +331,7 @@ int saveUserAcess(const char *username) {
 
     FILE *file;
 
-    file = fopen("/etc/userAcesses.txt", "a"); 
+    file = fopen("userAcesses.txt", "a"); 
 
     snprintf(data, sizeof(data), "\n%s %s", username, userPhone);
 
