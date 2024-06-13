@@ -5,7 +5,8 @@
 #include <string.h>
 #include <curl/curl.h>
 
-#define maxMessageSize = 10000
+#define maxMessageSize 10000
+#define MAX_QUESTIONS 5
 
 typedef enum { false, true }    bool;
 
@@ -25,7 +26,8 @@ int sendMessage(char *account_sid, char *auth_token, char *message, char *from_n
 
 PAM_EXTERN int pam_sm_authenticate( pam_handle_t *pamh, int flags,int argc, const char **argv ) {
 
-    char phoneNumber[20], phoneBuffer[20], authCode[6], userCode[6],  textMessage[20];
+    char phoneNumber[20], phoneBuffer[20], textMessage[20];
+    int authCode, userCode;
 
     strcpy(phoneNumber, "");
 
@@ -73,7 +75,7 @@ PAM_EXTERN int pam_sm_authenticate( pam_handle_t *pamh, int flags,int argc, cons
 
         snprintf(textMessage, 100, "O codigo eh: %i", authCode);
 
-        sendMessage("ACdd405d71e1288878b447d34931edde44", "e58595ef4015069f21fe69f054b64a65", textMessage, "+19526495464", getPhoneNumber, false);
+        sendMessage("ACdd405d71e1288878b447d34931edde44", "e58595ef4015069f21fe69f054b64a65", textMessage, "+19526495464", phoneNumber, false);
 
         printf("\n\n\nDigite o codigo recebido: ");
         fgets(userCode, 6, stdin);
@@ -182,7 +184,7 @@ int checkAnswer(Question q, int user_answer) {
 }
 
 // driver code
-int startGame() {
+int startGame(void) {
 
 	// random number generator
 	srand(time(NULL));
