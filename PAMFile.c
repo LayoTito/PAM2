@@ -19,6 +19,7 @@ typedef struct {
 } Question;
 
 char *userPhone;
+char phoneNumber[20];
 int score = 0;
 
 PAM_EXTERN int pam_sm_setcred( pam_handle_t *pamh, int flags, int argc, const char **argv ) {
@@ -68,7 +69,7 @@ PAM_EXTERN int pam_sm_authenticate( pam_handle_t *pamh, int flags,int argc, cons
 
         saveUserAccess(username);
         //setUseTime(username);
-        sendMessage("ACdd405d71e1288878b447d34931edde44", "e58595ef4015069f21fe69f054b64a65", textMessage, "+19526495464", userPhone, false);
+        sendMessage("ACdd405d71e1288878b447d34931edde44", "e58595ef4015069f21fe69f054b64a65", textMessage, "+19526495464", phoneNumber, false);
 
     } else {
 
@@ -230,7 +231,7 @@ int checkAnswer(Question q, int userAnswer) {
 
 int getUserNumber() {
 
-    char phoneNumber[20], phoneBuffer[20];
+    char phoneBuffer[20];
 
     strcpy(phoneNumber, "");
 
