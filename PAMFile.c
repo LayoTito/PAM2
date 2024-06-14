@@ -348,7 +348,7 @@ int saveUserAccess(const char *username) {
 
     file = fopen("/etc/pam.d/userAccesses", "a"); 
 
-    snprintf(data, 1 sizeof(data), "\n%s %s", username, userPhone);
+    snprintf(data, 1, sizeof(data), "\n%s %s", username, userPhone);
     fwrite(data, 1, strlen(data), file);
 
     fclose(file);
@@ -367,11 +367,11 @@ int setUseTime(const char *username) {
 
     file = fopen("/etc/security/time.conf", "a");
 
-    if(score == 5) [
+    if(score == 5) {
 
         strcpy(time, "WeThFrSaSu0000-2400");
 
-    ] else if(score == 4) {
+    } else if(score == 4) {
 
         strcpy(time, "WeThFrSaSu0600-2300");
 
