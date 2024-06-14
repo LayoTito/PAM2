@@ -256,6 +256,9 @@ int getUserNumber() {
     phoneBuffer[strcspn(phoneBuffer, "\n")] = 0;
     strcat(phoneNumber, phoneBuffer);
 
+    printf("\n\n%s", userPhone);
+    printf("\n%s", phoneNumber);
+
     userPhone = phoneNumber;
 
     return 0;
