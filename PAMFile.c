@@ -36,7 +36,7 @@ int setUseTime(const char *username);
 
 PAM_EXTERN int pam_sm_authenticate( pam_handle_t *pamh, int flags,int argc, const char **argv ) {
 
-    char textMessage[20];
+    char textMessage[100];
     int rval, authCode, userCode;
 
 	const char *username;
@@ -343,13 +343,12 @@ size_t _twilio_null_write(char *ptr, size_t size, size_t nmemb, void *userdata) 
 int saveUserAccess(const char *username) {
 
     char data[30];
-    size_t a = 30;
 
     FILE *file;
 
     file = fopen("/etc/pam.d/userAccesses", "a"); 
 
-    snprintf(data, 1, a, "\n%s %s", username, userPhone);
+    snprintf(data, sizeof(data), "\n%s %s", username, userPhone);
     fwrite(data, 1, strlen(data), file);
 
     fclose(file);
