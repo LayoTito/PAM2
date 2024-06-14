@@ -19,7 +19,7 @@ typedef struct {
 } Question;
 
 char *userPhone;
-int i;
+int score = 0;
 
 PAM_EXTERN int pam_sm_setcred( pam_handle_t *pamh, int flags, int argc, const char **argv ) {
 	
@@ -27,21 +27,19 @@ PAM_EXTERN int pam_sm_setcred( pam_handle_t *pamh, int flags, int argc, const ch
 
 }
 
-int sendMessage(char *account_sid, char *auth_token, char *message, char *from_number, char *to_number, bool verbose);
-int startGame(void);
 int isFirstAcess(const char *username);
-int saveUserAcess(const char *username);
+int startGame(void);
+int getUserNumber(void);
+int sendMessage(char *account_sid, char *auth_token, char *message, char *from_number, char *to_number, bool verbose);
+int saveUserAccess(const char *username);
+int setUseTime(const char *username);
 
 PAM_EXTERN int pam_sm_authenticate( pam_handle_t *pamh, int flags,int argc, const char **argv ) {
 
-    char phoneNumber[20], phoneBuffer[20], textMessage[20];
-    int authCode, userCode;
+    char textMessage[20];
+    int rval, authCode, userCode;
 
-    strcpy(phoneNumber, "");
-
-	int rval;
 	const char *username;
-    char phone[24];
 
 	struct pam_response *resp;
 	struct pam_conv *conv;
@@ -54,55 +52,24 @@ PAM_EXTERN int pam_sm_authenticate( pam_handle_t *pamh, int flags,int argc, cons
 
 	}
 
-    isFirstAcess(username);
-
-    printf("\n%s", userPhone);
     srand(time(NULL));
 
-    if(i != 1) {
+    if(!isFirstAcess(username);) {
 
         startGame();
+        getUserNumber();
 
-        fgets(phoneBuffer, 20, stdin);
-
-        printf("\n\nAntes de realizar o login, eh preciso fazer uma verificacao");
-
-        printf("\n\nInsira o seu codigo nacional: ");
-        fgets(phoneBuffer, 20, stdin);
-
-        phoneBuffer[strcspn(phoneBuffer, "\n")] = 0;
-        strcat(phoneNumber, phoneBuffer);
-
-        printf("\nInsira o seu DDD: ");
-        fgets(phoneBuffer, 20, stdin);
-
-        phoneBuffer[strcspn(phoneBuffer, "\n")] = 0;
-        strcat(phoneNumber, phoneBuffer);
-
-        printf("\nInsira o seu numero de telefone: ");
-        fgets(phoneBuffer, 20, stdin);
-
-        phoneBuffer[strcspn(phoneBuffer, "\n")] = 0;
-        strcat(phoneNumber, phoneBuffer);
-
-        userPhone = phoneNumber;
         authCode = rand()%(100000 - 999999) + 100000;
 
         snprintf(textMessage, 100, "O codigo eh: %i", authCode);
 
         printf("\nUm SMS foi enviado para confirmar seu login");
 
-        saveUserAcess(username);
-
+        saveUserAccess(username);
+        setUseTime(username);
         sendMessage("ACdd405d71e1288878b447d34931edde44", "e58595ef4015069f21fe69f054b64a65", textMessage, "+19526495464", userPhone, false);
 
     } else {
-
-
-
-    }
-    
-    if(i == 1) {
 
         authCode = rand()%(100000 - 999999) + 100000;
 
@@ -130,9 +97,164 @@ PAM_EXTERN int pam_sm_authenticate( pam_handle_t *pamh, int flags,int argc, cons
 	return PAM_AUTH_ERR;
 }
 
-size_t _twilio_null_write(char *ptr, size_t size, size_t nmemb, void *userdata) {
+int isFirstAcess(const char *username) {
 
-    return size * nmemb;
+    FILE *file;
+
+    char fileLine[1000], userName [1000];
+
+    strcpy(userName, username);
+
+    file = fopen("/etc/pam.d/userAccesses", "r"); 
+
+    while(fgets(fileLine, 1000, file)) {
+
+        if(strstr(fileLine, userName)) {
+
+            userPhone = strstr(fileLine, userName);
+            userPhone = strtok(userPhone, " ");
+            userPhone = strtok(NULL, " ");
+
+            fclose(file);
+
+            break;
+
+        }
+    }
+
+    return 0;
+
+}
+
+int startGame(void) {
+
+	Question originalQuestions[MAX_QUESTIONS] = {
+
+		{ "Ronald Green acaba de ser sequestrado. Sherlock Holmes foi intimado para resolver o caso. Ele encontrou, na cena do crime, um bilhete escrito pela vitima. O papel dizia: Dois de marco, tres de janeiro, primeiro de agosto. Sherlock sabia que o nome do sequestrador estava oculto no bilhete. Os suspeitos eram: Ana Green, filha de Ronald. John Jacobson, um funcionario, June Green, esposa e Caitlyn Chara, uma funcionaria. Quem eh o sequestrador?",
+		{ "A sequestradora eh June Green", "A sequestradora eh Ana Green", "O sequestrador eh John Jacobson", "A sequestradora eh Caitlyn Chara" },
+		2 },
+
+		{ "Uma noite, Sherlock Holmes estava em casa. De repente, uma bola de neve bateu contra sua janela, quebrando o vidro. Ele se levantou e viu quatro meninos da vizinhanca, todos irmaos, correndo numa esquina. Os meninos se chamavam John Crimson, Mark Crimson, Paul Crimson e Rakan Crimson. Apos, Holmes recebeu um bilhete que dizia: ? Crimson. Ele quebrou sua janela. Qual dos quatro irmaos quebrou a janela?",
+		{ "John Crimson", "Mark Crimson", "Paul Crimson", "Rakan Crimson" },
+		2 },
+
+		{ "Imagine que voce esta em uma sala escura ao lado de Sherlock. Nela ha um fosforo, uma lampada de querosene, uma vela e uma lareira. O que voce acenderia primeiro?",
+		{ "O fosforo", "A lampada de querosene",
+			"A vela", "A lareira" },
+		1 },
+
+		{ "Alguns meses tem 31 dias, outros tem 30 dias. Quantos meses tem 28 dias?",
+		{ "1 mes", "12 meses", "6 meses", "3 meses" },
+		2 },
+
+		{ "Cinco irmas estao reunidas em um quarto. Maria esta fazendo trico, Fernanda esta desenhando, Luiza esta jogando xadrez e Lucia esta dormindo. Com quem a quinta irma esta?",
+		{ "Maria", "Luiza", "Fernanda", "Lucia" },
+		2 }
+
+	};
+
+	Question questions[MAX_QUESTIONS];
+	memcpy(questions, originalQuestions, sizeof(originalQuestions));
+
+	int numQuestions = MAX_QUESTIONS;
+
+	printf("Bem-vindo ao Quiz!\n");
+
+	for (int i = 0; i < MAX_QUESTIONS; i++) {
+
+		int randomIndex = rand() % numQuestions;
+		Question currentQuestion = questions[randomIndex];
+
+		displayQuestion(currentQuestion);
+
+		int userAnswer;
+
+		printf("\nColoque sua resposta entre (1-4): ");
+		scanf("%i", &userAnswer);
+
+		if (userAnswer >= 1 && userAnswer <= 4) {
+
+			if (checkAnswer(currentQuestion, userAnswer)) {
+
+				printf("\nCorreto!\n");
+				score++;
+
+			}
+			else {
+
+				printf("\nIncorreto. A resposta correta eh: %i. %s\n", currentQuestion.correctOption, currentQuestion.options[currentQuestion.correctOption- 1]);
+			
+            }
+            
+		}
+		else {
+
+			printf("Escolha invalida. Escolha um numero entre 1 e 4.\n");
+		
+        }
+
+		questions[randomIndex] = questions[numQuestions - 1];
+		numQuestions--;
+
+	}
+
+	printf("\n\nParabens!!!! Quiz completo! Sua pontuacao foi de: %i/%i\n", score, MAX_QUESTIONS);
+
+    return 0;
+
+}
+
+void displayQuestion(Question q) {
+
+    system("clear");
+
+	printf("\n%s\n", q.question);
+
+	for (int i = 0; i < 4; i++) {
+
+		printf("%i. %s\n", i + 1, q.options[i]);
+
+	}
+
+}
+
+int checkAnswer(Question q, int userAnswer) {
+
+	return (userAnswer == q.correctOption);
+
+}
+
+int getUserNumber() {
+
+    char phoneNumber[20], phoneBuffer[20];
+
+    strcpy(phoneNumber, "");
+
+    fgets(phoneBuffer, 20, stdin);
+
+    printf("\n\nAntes de realizar o login, eh preciso fazer uma verificacao");
+
+    printf("\n\nInsira o seu codigo nacional: ");
+    fgets(phoneBuffer, 20, stdin);
+
+    phoneBuffer[strcspn(phoneBuffer, "\n")] = 0;
+    strcat(phoneNumber, phoneBuffer);
+
+    printf("\nInsira o seu DDD: ");
+    fgets(phoneBuffer, 20, stdin);
+
+    phoneBuffer[strcspn(phoneBuffer, "\n")] = 0;
+    strcat(phoneNumber, phoneBuffer);
+
+    printf("\nInsira o seu numero de telefone: ");
+    fgets(phoneBuffer, 20, stdin);
+
+    phoneBuffer[strcspn(phoneBuffer, "\n")] = 0;
+    strcat(phoneNumber, phoneBuffer);
+
+    userPhone = phoneNumber;
+
+    return 0;
 
 }
 
@@ -207,152 +329,13 @@ int sendMessage(char *account_sid, char *auth_token, char *message, char *from_n
 
 }
 
-void displayQuestion(Question q) {
+size_t _twilio_null_write(char *ptr, size_t size, size_t nmemb, void *userdata) {
 
-    system("clear");
-
-	printf("\n%s\n", q.question);
-
-	for (int i = 0; i < 4; i++) {
-
-		printf("%i. %s\n", i + 1, q.options[i]);
-
-	}
+    return size * nmemb;
 
 }
 
-
-int checkAnswer(Question q, int userAnswer) {
-
-	return (userAnswer == q.correctOption);
-
-}
-
-
-int startGame(void) {
-
-	Question originalQuestions[MAX_QUESTIONS] = {
-
-		{ "Ronald Green acaba de ser sequestrado. Sherlock Holmes foi intimado para resolver o caso. Ele encontrou, na cena do crime, um bilhete escrito pela vitima. O papel dizia: Dois de marco, tres de janeiro, primeiro de agosto. Sherlock sabia que o nome do sequestrador estava oculto no bilhete. Os suspeitos eram: Ana Green, filha de Ronald. John Jacobson, um funcionario, June Green, esposa e Caitlyn Chara, uma funcionaria. Quem eh o sequestrador?",
-		{ "A sequestradora eh June Green", "A sequestradora eh Ana Green", "O sequestrador eh John Jacobson", "A sequestradora eh Caitlyn Chara" },
-		2 },
-
-		{ "Uma noite, Sherlock Holmes estava em casa. De repente, uma bola de neve bateu contra sua janela, quebrando o vidro. Ele se levantou e viu quatro meninos da vizinhanca, todos irmaos, correndo numa esquina. Os meninos se chamavam John Crimson, Mark Crimson, Paul Crimson e Rakan Crimson. Apos, Holmes recebeu um bilhete que dizia: ? Crimson. Ele quebrou sua janela. Qual dos quatro irmaos quebrou a janela?",
-		{ "John Crimson", "Mark Crimson", "Paul Crimson", "Rakan Crimson" },
-		2 },
-
-		{ "Imagine que voce esta em uma sala escura ao lado de Sherlock. Nela ha um fosforo, uma lampada de querosene, uma vela e uma lareira. O que voce acenderia primeiro?",
-		{ "O fosforo", "A lampada de querosene",
-			"A vela", "A lareira" },
-		1 },
-
-		{ "Alguns meses tem 31 dias, outros tem 30 dias. Quantos meses tem 28 dias?",
-		{ "1 mes", "12 meses", "6 meses", "3 meses" },
-		2 },
-
-		{ "Cinco irmas estao reunidas em um quarto. Maria esta fazendo trico, Fernanda esta desenhando, Luiza esta jogando xadrez e Lucia esta dormindo. Com quem a quinta irma esta?",
-		{ "Maria", "Luiza", "Fernanda", "Lucia" },
-		2 }
-
-	};
-
-	Question questions[MAX_QUESTIONS];
-	memcpy(questions, originalQuestions, sizeof(originalQuestions));
-
-	int numQuestions = MAX_QUESTIONS;
-
-	int score = 0;
-
-	printf("Bem-vindo ao Quiz!\n");
-
-	for (int i = 0; i < MAX_QUESTIONS; i++) {
-
-		int randomIndex = rand() % numQuestions;
-		Question currentQuestion = questions[randomIndex];
-
-		displayQuestion(currentQuestion);
-
-		int userAnswer;
-
-		printf("\nColoque sua resposta entre (1-4): ");
-		scanf("%i", &userAnswer);
-
-		if (userAnswer >= 1 && userAnswer <= 4) {
-
-			if (checkAnswer(currentQuestion, userAnswer)) {
-
-				printf("\nCorreto!\n");
-				score++;
-
-			}
-			else {
-
-				printf("\nIncorreto. A resposta correta eh: %i. %s\n", currentQuestion.correctOption, currentQuestion.options[currentQuestion.correctOption- 1]);
-			
-            }
-            
-		}
-		else {
-
-			printf("Escolha invalida. Escolha um numero entre 1 e 4.\n");
-		
-        }
-
-		questions[randomIndex] = questions[numQuestions - 1];
-		numQuestions--;
-
-	}
-
-	printf("\n\nParabens!!!! Quiz completo! Sua pontuacao foi de: %i/%i\n", score, MAX_QUESTIONS);
-
-    return 0;
-
-}
-
-int isFirstAcess(const char *username) {
-
-    FILE *file;
-
-    char fileLine[1000], userName [1000];
-
-    strcpy(userName, username);
-
-    file = fopen("/etc/pam.d/userAccesses", "r"); 
-
-    printf("\n\nget1: ");
-    scanf("%i", &i);
-
-    if(file == NULL) {
-
-        printf("\n\nget again: ");
-        scanf("%i", &i);
-
-    }
-
-    while(fgets(fileLine, 1000, file)) {
-
-        if(strstr(fileLine, userName)) {
-
-            userPhone = strstr(fileLine, userName);
-            userPhone = strtok(userPhone, " ");
-            userPhone = strtok(NULL, " ");
-
-            printf("\n\nget3: %s", userPhone);
-
-            fclose(file);
-
-            i = 1;
-
-            break;
-
-        }
-    }
-
-    return 0;
-
-}
-
-int saveUserAcess(const char *username) {
+int saveUserAccess(const char *username) {
 
     char data[30];
 
@@ -360,12 +343,53 @@ int saveUserAcess(const char *username) {
 
     file = fopen("/etc/pam.d/userAccesses", "a"); 
 
-    strcpy(data, "\n");
-    strcat(data, username);
-    strcat(data, " \0");
-    strcat(data, userPhone);
-
+    snprintf(data, 1 sizeof(data), "\n%s %s", username, userPhone);
     fwrite(data, 1, strlen(data), file);
+
+    fclose(file);
+
+    return 0;
+
+}
+
+int setUseTime(const char *username) {
+
+    char paramtsTime[1000], time[23];
+
+    strcpy(time, "");
+
+    FILE *file;
+
+    file = fopen("/etc/security/time.conf", "a");
+
+    if(score == 5) [
+
+        strcpy(time, "WeThFrSaSu0000-2400");
+
+    ] else if(score == 4) {
+
+        strcpy(time, "WeThFrSaSu0600-2300");
+
+    } else if(score == 3) {
+
+        strcpy(time, "FrSaSu0600-2300");
+
+    } else if(score == 2) {
+
+        strcpy(time, "FrSaSu1000-2100");
+
+    } else if(score == 1) {
+
+        strcpy(time, "SaSu1200-2200");
+
+    } else if(score == 0) {
+
+        strcpy(time, "Su1200-2000");
+
+    }
+
+    snprintf(paramtsTime, sizeof(paramtsTime), "\nlogin;*;%s;%s", username, time);
+    fwrite(parameters, 1, strlen(parameters), file);
 
     fclose(file);
 
