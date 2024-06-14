@@ -119,9 +119,7 @@ int isFirstAccess(const char *username) {
             userPhone = strtok(NULL, " ");
 
             n = 1;
-            printf("\n%s", userPhone);
             strcpy(phoneNumber, userPhone);
-            printf("\n%s", phoneNumber);
 
             fclose(file);
 
