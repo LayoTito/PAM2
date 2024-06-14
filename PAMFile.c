@@ -121,6 +121,7 @@ int isFirstAccess(const char *username) {
             userPhone = strtok(NULL, " ");
 
             n = 1;
+            phoneNumber = userPhone;
 
             fclose(file);
 
