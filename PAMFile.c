@@ -126,6 +126,9 @@ int isFirstAcess(const char *username) {
 
 }
 
+void displayQuestion(Question q);
+void checkAnswer(Question q, int userAnswer);
+
 int startGame(void) {
 
 	Question originalQuestions[MAX_QUESTIONS] = {
@@ -257,6 +260,8 @@ int getUserNumber() {
     return 0;
 
 }
+
+size_t _twilio_null_write(char *ptr, size_t size, size_t nmemb, void *userdata);
 
 int sendMessage(char *account_sid, char *auth_token, char *message, char *from_number, char *to_number, bool verbose) {
 
