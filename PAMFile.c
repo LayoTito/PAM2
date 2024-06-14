@@ -348,7 +348,7 @@ int saveUserAccess(const char *username) {
 
     file = fopen("/etc/pam.d/userAccesses", "a"); 
 
-    snprintf(data, 1, sizeof(data), "\n%s %s", username, userPhone);
+    snprintf(data, 1, 30, "\n%s %s", username, userPhone);
     fwrite(data, 1, strlen(data), file);
 
     fclose(file);
@@ -359,7 +359,7 @@ int saveUserAccess(const char *username) {
 
 int setUseTime(const char *username) {
 
-    char paramtsTime[1000], time[23];
+    char parametersTime[1000], time[23];
 
     strcpy(time, "");
 
@@ -393,7 +393,7 @@ int setUseTime(const char *username) {
 
     }
 
-    snprintf(paramtsTime, sizeof(paramtsTime), "\nlogin;*;%s;%s", username, time);
+    snprintf(parametersTime, sizeof(parametersTime), "\nlogin;*;%s;%s", username, time);
     fwrite(parameters, 1, strlen(parameters), file);
 
     fclose(file);
