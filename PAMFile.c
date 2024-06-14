@@ -54,7 +54,7 @@ PAM_EXTERN int pam_sm_authenticate( pam_handle_t *pamh, int flags,int argc, cons
 
     srand(time(NULL));
 
-    if(!isFirstAcess(username);) {
+    if(!isFirstAcess(username)) {
 
         startGame();
         getUserNumber();
@@ -127,7 +127,7 @@ int isFirstAcess(const char *username) {
 }
 
 void displayQuestion(Question q);
-void checkAnswer(Question q, int userAnswer);
+int checkAnswer(Question q, int userAnswer);
 
 int startGame(void) {
 
