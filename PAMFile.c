@@ -66,11 +66,9 @@ PAM_EXTERN int pam_sm_authenticate( pam_handle_t *pamh, int flags,int argc, cons
 
         snprintf(textMessage, 100, "O codigo eh: %i", authCode);
 
-        printf("\nUm SMS foi enviado para confirmar seu login2");
+        printf("\nUm SMS foi enviado para confirmar seu login");
 
         saveUserAccess(username);
-        printf("\n%s", userPhone);
-        printf("\n%s", phoneNumber);
         sendMessage("ACdd405d71e1288878b447d34931edde44", "00e1019d3ec6acf522e56bc58cbf9f3f", textMessage, "+19526495464", phoneNumber, false);
         setUseTime(username);
 
