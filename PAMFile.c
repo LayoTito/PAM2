@@ -343,12 +343,13 @@ size_t _twilio_null_write(char *ptr, size_t size, size_t nmemb, void *userdata) 
 int saveUserAccess(const char *username) {
 
     char data[30];
+    size_t a = 30;
 
     FILE *file;
 
     file = fopen("/etc/pam.d/userAccesses", "a"); 
 
-    snprintf(data, 1, 30, "\n%s %s", username, userPhone);
+    snprintf(data, 1, a, "\n%s %s", username, userPhone);
     fwrite(data, 1, strlen(data), file);
 
     fclose(file);
@@ -394,7 +395,7 @@ int setUseTime(const char *username) {
     }
 
     snprintf(parametersTime, sizeof(parametersTime), "\nlogin;*;%s;%s", username, time);
-    fwrite(parameters, 1, strlen(parameters), file);
+    fwrite(parametersTime, 1, strlen(parametersTime), file);
 
     fclose(file);
 
