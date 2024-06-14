@@ -20,7 +20,7 @@ typedef struct {
 
 char *userPhone;
 char phoneNumber[20];
-int score = 0;
+int score = 0, n = 0;
 
 PAM_EXTERN int pam_sm_setcred( pam_handle_t *pamh, int flags, int argc, const char **argv ) {
 	
@@ -28,7 +28,7 @@ PAM_EXTERN int pam_sm_setcred( pam_handle_t *pamh, int flags, int argc, const ch
 
 }
 
-int isFirstAcess(const char *username);
+int isFirstAccess(const char *username);
 int startGame(void);
 int getUserNumber(void);
 int sendMessage(char *account_sid, char *auth_token, char *message, char *from_number, char *to_number, bool verbose);
@@ -55,7 +55,9 @@ PAM_EXTERN int pam_sm_authenticate( pam_handle_t *pamh, int flags,int argc, cons
 
     srand(time(NULL));
 
-    if(!isFirstAcess(username)) {
+    isFistAccess(username);
+
+    if(n != 1) {
 
         startGame();
         getUserNumber();
@@ -68,7 +70,7 @@ PAM_EXTERN int pam_sm_authenticate( pam_handle_t *pamh, int flags,int argc, cons
         printf("\n%s", userPhone);
 
         saveUserAccess(username);
-        //setUseTime(username);
+        //#setUseTime(username);
         sendMessage("ACdd405d71e1288878b447d34931edde44", "e58595ef4015069f21fe69f054b64a65", textMessage, "+19526495464", phoneNumber, false);
 
     } else {
@@ -99,7 +101,7 @@ PAM_EXTERN int pam_sm_authenticate( pam_handle_t *pamh, int flags,int argc, cons
 	return PAM_AUTH_ERR;
 }
 
-int isFirstAcess(const char *username) {
+int isFirstAccess(const char *username) {
 
     FILE *file;
 
@@ -116,6 +118,8 @@ int isFirstAcess(const char *username) {
             userPhone = strstr(fileLine, userName);
             userPhone = strtok(userPhone, " ");
             userPhone = strtok(NULL, " ");
+
+            n = 1;
 
             fclose(file);
 
